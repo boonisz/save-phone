@@ -23,7 +23,11 @@ One can use [FTP Server (Free)](https://f-droid.org/en/packages/be.ppareit.swift
 
 
 ### On the computer
-Configure the script [synch_phone.sh](./synch_phone.sh) (doc is embedded on the first lines).
+- Install `curlftpfs`
+
+	sudo apt install curlftpfs
+
+- Configure the script [synch_phone.sh](./synch_phone.sh) (doc is embedded on the first lines).
 
 
 Synchronize

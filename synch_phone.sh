@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/bin/bash
 set -e  # Exit if error
 
 
@@ -24,11 +24,10 @@ DESTINATION=phone/ # Local folder where to save files
 
 
 LINK=()
-LINK+=("WhatsApp/Media/WhatsApp Video" "WhatsApp/WhatsApp Video")
-LINK+=("WhatsApp/Media/WhatsApp Images" "WhatsApp/WhatsApp Images")
-LINK+=("DCIM/Camera" "DCIM")
+LINK+=("WhatsApp/Media" "WhatsApp")
+LINK+=("DCIM" "DCIM")
 
-EXCLUDE_DIR=save
+EXCLUDE_DIR=saved
 
 # =============================================================================
 
@@ -45,14 +44,17 @@ echo "Mount FTP folder in ${SOURCE} in read-only"
 if [ ! -d ${SOURCE} ]; then
 	mkdir -p ${SOURCE}
 	curlftpfs -r ${FTP_USER}:${FTP_PASS}@${FTP_IP}:${FTP_PORT}/ ${SOURCE}
+	echo curlftpfs -r ${FTP_USER}:${FTP_PASS}@${FTP_IP}:${FTP_PORT}/ ${SOURCE}
 fi
-
-echo curlftpfs -r ${FTP_USER}:${FTP_PASS}@${FTP_IP}:${FTP_PORT}/ ${SOURCE}
 echo "Start synchronisation"
 for ((i=0; i<${#LINK[@]}; i+=2)); do
   SOURCE_DIR=${LINK[i]}
   DESTINATION_DIR=${LINK[i+1]}
   echo "############################## ${SOURCE_DIR} > ${DESTINATION_DIR}"
+  if [ ! -d "${SOURCE}/${SOURCE_DIR}" ]; then
+    echo "WARNING - cannot find ${SOURCE}/${SOURCE_DIR}"
+    continue
+  fi
   mkdir -p "${DESTINATION}/${DESTINATION_DIR}/"
   # WARNING with source, rsync do: copy folder with src but only folder content with src/
   rsync -rv --delete --ignore-existing --exclude "${EXCLUDE_DIR}" "${SOURCE}/${SOURCE_DIR}/" "${DESTINATION}/${DESTINATION_DIR}/"
